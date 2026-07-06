@@ -1,0 +1,602 @@
+# 多金喜服装租赁平台部署操作手册
+
+这份手册写给不会编程的商家。你只需要跟着步骤做，就可以把项目部署到线上。
+
+推荐方案：
+
+| 部分 | 使用平台 | 作用 |
+|---|---|---|
+| 数据库 | Supabase | 保存用户、商品、订单、资金等数据 |
+| 后端 | Railway | 运行接口服务 |
+| 前端 | Vercel | 运行网页 |
+
+整体关系：
+
+```text
+你的电脑 ↓ 上传代码 GitHub ↓ Railway 运行后端接口 ←→ Supabase 数据库 ↑ Vercel 运行前端网页
+
+
+Plain Text
+
+
+## 第一步：准备账号和软件
+
+### 1. 安装 Node.js
+
+1. 打开浏览器，访问：`https://nodejs.org`
+2. 下载 LTS 版本。
+3. 安装时一路点击“下一步”即可。
+4. 安装完成后，打开电脑的终端：
+
+Windows：
+
+```text
+按 Win 键 → 搜索 PowerShell → 打开
+
+
+Plain Text
+
+
+Mac：
+
+```text
+打开“终端”
+
+
+Plain Text
+
+
+输入：
+
+```bash
+node -v npm -v
+
+
+Plain Text
+
+
+如果能看到版本号，例如：
+
+```text
+v20.x.x 10.x.x
+
+
+Plain Text
+
+
+说明安装成功。
+
+### 2. 安装 Git
+
+1. 访问：`https://git-scm.com`
+2. 下载并安装 Git。
+3. 安装后打开终端，输入：
+
+```bash
+git --version
+
+
+Plain Text
+
+
+看到版本号就说明成功。
+
+### 3. 注册 GitHub
+
+1. 打开：`https://github.com`
+2. 注册账号。
+3. 登录后点击右上角 `+`，选择 `New repository`。
+4. 仓库名可以写：
+
+```text
+clothing-rental
+
+
+Plain Text
+
+
+5. 选择 `Private` 或 `Public` 都可以。
+6. 点击 `Create repository`。
+
+### 4. 注册 Supabase
+
+1. 打开：`https://supabase.com`
+2. 使用 GitHub 登录。
+3. 点击 `New project`。
+4. Organization 选择默认。
+5. Project name 填：
+
+```text
+clothing-rental
+
+
+Plain Text
+
+
+6. Database Password 设置一个你能记住的强密码。
+7. Region 选择离你近的区域。
+8. 点击 `Create new project`。
+
+等待几分钟，项目会创建完成。
+
+### 5. 注册 Railway
+
+1. 打开：`https://railway.app`
+2. 用 GitHub 登录。
+3. 后面会用它部署后端。
+
+### 6. 注册 Vercel
+
+1. 打开：`https://vercel.com`
+2. 用 GitHub 登录。
+3. 后面会用它部署前端。
+
+## 第二步：把项目上传到 GitHub
+
+解压项目 ZIP 后，你会看到这样的目录：
+
+```text
+clothing-rental/ backend/ frontend/ DEPLOY_GUIDE.md OPERATIONS.md TROUBLESHOOTING.md VIDEO_SCRIPT.md deploy.sh
+
+
+Plain Text
+
+
+打开终端，进入项目目录。
+
+如果你把项目放在桌面，命令类似：
+
+```bash
+cd Desktop/clothing-rental
+
+
+Plain Text
+
+
+初始化 Git：
+
+```bash
+git init git add . git commit -m "initial deploy"
+
+
+Plain Text
+
+
+连接你的 GitHub 仓库：
+
+```bash
+git remote add origin https://github.com/ 你的用户名/clothing-rental.git git branch -M main git push -u origin main
+
+
+Plain Text
+
+
+如果 GitHub 要求登录，按提示完成即可。
+
+## 第三步：配置 Supabase 数据库
+
+### 1. 找到数据库连接字符串
+
+1. 打开 Supabase 项目。
+2. 左侧点击 `Project Settings`。
+3. 点击 `Database`。
+4. 找到 `Connection string`。
+5. 选择 `URI`。
+
+你会看到类似：
+
+```text
+postgresql://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:5432/postgres
+
+
+Plain Text
+
+
+把 `[YOUR-PASSWORD]` 换成你创建 Supabase 项目时设置的数据库密码。
+
+最后建议加上：
+
+```text
+?schema=public
+
+
+Plain Text
+
+
+最终格式类似：
+
+```text
+postgresql://postgres:你的密码@db.xxxxx.supabase.co:5432/postgres?schema=public
+
+
+Plain Text
+
+
+这个就是后端的 `DATABASE_URL`。
+
+## 第四步：配置后端环境变量
+
+后端环境变量在 Railway 配置，不建议把真实密码写进文件。
+
+你需要准备这些：
+
+| 名称 | 怎么填 |
+|---|---|
+| `NODE_ENV` | `production` |
+| `PORT` | `3000` |
+| `DATABASE_URL` | Supabase 数据库连接字符串 |
+| `CORS_ORIGIN` | 你的 Vercel 前端网址，先可以临时填 `*`，上线后改成正式域名 |
+| `JWT_SECRET` | 一串很长的随机字符 |
+
+生成 `JWT_SECRET` 的简单方法：
+
+打开终端，输入：
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+
+Plain Text
+
+
+复制输出结果。
+
+## 第五步：在 Railway 部署后端
+
+### 1. 创建 Railway 项目
+
+1. 打开 Railway。
+2. 点击 `New Project`。
+3. 选择 `Deploy from GitHub repo`。
+4. 选择你的项目仓库。
+5. 如果让你授权 GitHub，点击同意。
+
+### 2. 设置后端目录
+
+Railway 可能会默认从根目录部署。你需要设置为：
+
+```text
+backend
+
+
+Plain Text
+
+
+常见位置：
+
+```text
+Settings → Source → Root Directory
+
+
+Plain Text
+
+
+填写：
+
+```text
+backend
+
+
+Plain Text
+
+
+### 3. 配置环境变量
+
+进入 Railway 项目的 `Variables` 页面，逐个添加：
+
+```text
+NODE_ENV=production PORT=3000 DATABASE_URL=你的 Supabase 数据库连接字符串 CORS_ORIGIN=先填 * JWT_SECRET=你生成的随机字符串
+
+
+Plain Text
+
+
+### 4. 设置构建和启动命令
+
+Build Command：
+
+```bash
+npm ci && npx prisma generate && npm run build
+
+
+Plain Text
+
+
+Start Command：
+
+```bash
+npm start
+
+
+Plain Text
+
+
+### 5. 部署
+
+保存后 Railway 会自动部署。
+
+部署成功后，Railway 会给你一个后端网址，例如：
+
+```text
+https://clothing-rental-backend.up.railway.app
+
+
+Plain Text
+
+
+打开：
+
+```text
+https://你 的后端网址/health
+
+
+Plain Text
+
+
+如果看到：
+
+```json
+{"ok":true}
+
+
+Plain Text
+
+
+说明后端运行成功。
+
+## 第六步：初始化数据库
+
+在 Railway 项目里找到后端服务，打开 `Shell` 或 `Console`。
+
+依次执行：
+
+```bash
+npx prisma db push npm run seed
+
+
+Plain Text
+
+
+执行成功后，会创建基础数据：
+
+| 账号 | 手机号 | 初始密码 |
+|---|---|---|
+| 普通用户 | `13800000000` | `123456` |
+| 商家账号 | `13900000000` | `123456` |
+| 系统管理员 | `13700000000` | `Aa123456!` |
+
+注意：上线后请尽快登录商家和管理员账号，修改密码并绑定 TOTP。
+
+## 第七步：在 Vercel 部署前端
+
+### 1. 创建 Vercel 项目
+
+1. 打开 Vercel。
+2. 点击 `Add New Project`。
+3. 选择你的 GitHub 仓库。
+4. 点击 `Import`。
+
+### 2. 设置前端目录
+
+Root Directory 填：
+
+```text
+frontend
+
+
+Plain Text
+
+
+Framework Preset 选择：
+
+```text
+Vite
+
+
+Plain Text
+
+
+Build Command：
+
+```bash
+npm run build
+
+
+Plain Text
+
+
+Output Directory：
+
+```text
+dist
+
+
+Plain Text
+
+
+### 3. 配置前端环境变量
+
+进入 Vercel 的 `Environment Variables`：
+
+```text
+VITE_API_BASE_URL=https://你 的后端网址
+
+
+Plain Text
+
+
+例如：
+
+```text
+VITE_API_BASE_URL=https://clothing-rental-backend.up.railway.app
+
+
+Plain Text
+
+
+### 4. 部署前端
+
+点击 `Deploy`。
+
+部署完成后，你会得到一个前端网址，例如：
+
+```text
+https://clothing-rental.vercel.app
+
+
+Plain Text
+
+
+## 第八步：回到 Railway 修改 CORS
+
+前端部署完成后，把 Railway 后端的：
+
+```text
+CORS_ORIGIN
+
+
+Plain Text
+
+
+改成你的 Vercel 前端网址：
+
+```text
+https://clothing-rental.vercel.app
+
+
+Plain Text
+
+
+然后 Railway 会自动重新部署。
+
+## 第九步：部署后验证
+
+打开你的 Vercel 前端网址。
+
+### 验证 1：登录商家后台
+
+使用：
+
+```text
+手机号：13900000000 密码：123456 短信验证码：123456
+
+
+Plain Text
+
+
+登录后建议立即：
+
+1. 修改登录密码。
+2. 设置支付密码。
+3. 绑定 TOTP。
+
+### 验证 2：打开商品列表
+
+确认首页能看到商品。
+
+### 验证 3：发布商品
+
+进入商家后台，尝试发布一个测试商品。
+
+### 验证 4：上传图片
+
+选择一张图片上传，确认可以显示。
+
+### 验证 5：查看订单
+
+用普通用户账号创建一个订单，商家后台确认能看到。
+
+### 验证 6：资金页面
+
+确认商家后台能看到：
+
+```text
+可用余额 提现冻结 累计收入 最低提现 提现手续费
+
+
+Plain Text
+
+
+## 第十步：上线前注意事项
+
+上线前请完成：
+
+- 修改商家默认密码。
+- 修改管理员默认密码。
+- 商家绑定 TOTP。
+- 管理员绑定 TOTP。
+- 设置正式店铺公告。
+- 上传真实商品图片。
+- 检查提现方式。
+- 如果要接真实微信支付，先完成微信商户号申请。
+
+## FAQ
+
+### 1. Railway 部署失败怎么办
+
+先看 Railway 的 `Deploy Logs`。
+
+常见原因：
+
+```text
+DATABASE_URL 没填 JWT_SECRET 没填 Root Directory 没设置成 backend
+
+
+Plain Text
+
+
+### 2. 前端打开后提示接口错误
+
+检查 Vercel 的环境变量：
+
+```text
+VITE_API_BASE_URL
+
+
+Plain Text
+
+
+必须是 Railway 后端网址，不能是 `localhost`。
+
+### 3. 登录时报跨域错误
+
+检查 Railway 后端的：
+
+```text
+CORS_ORIGIN
+
+
+Plain Text
+
+
+必须填 Vercel 前端网址。
+
+### 4. 数据库没有商品
+
+在 Railway Shell 里执行：
+
+```bash
+npm run seed
+
+
+Plain Text
+
+
+### 5. 图片上传后不显示
+
+Railway 的本地文件存储不适合长期保存图片。测试可以用，正式长期经营建议接入对象存储，例如：
+
+```text
+阿里云 OSS 腾讯云 COS Cloudflare R2 Amazon S3
+
+
+Plain Text
+
+
+### 6. 忘记管理员密码
+
+可以在数据库里重置，或者联系技术人员执行重置脚本。上线后建议把管理员账号信息妥善保存。
+
+### 7. 微信支付能直接收款吗
+
+当前是模拟支付流程。真实收款需要接入微信商户号和正式支付回调。

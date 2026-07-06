@@ -1,0 +1,66 @@
+[
+  {
+    "workspace": {
+      "id": "3b834483-c7e0-45ac-9ce8-c5f084ff6baf",
+      "name": "tammy-lang's Projects"
+    },
+    "id": "da6a313e-864b-4c04-b561-5e6f7ca15707",
+    "name": "optimistic-upliftment",
+    "createdAt": "2026-07-06T06:15:06.902Z",
+    "updatedAt": "2026-07-06T06:15:06.902Z",
+    "deletedAt": null,
+    "environments": {
+      "edges": [
+        {
+          "node": {
+            "id": "8d8564c1-7ec6-49b2-8025-fe2684997066",
+            "name": "production",
+            "canAccess": true
+          }
+        }
+      ]
+    },
+    "services": {
+      "edges": [
+        {
+          "node": {
+            "id": "33445776-1452-4794-8ba0-b598dd754210",
+            "name": "clothing-rental"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "workspace": {
+      "id": "3b834483-c7e0-45ac-9ce8-c5f084ff6baf",
+      "name": "tammy-lang's Projects"
+    },
+    "id": "cf9e6cd5-7163-4041-b03a-a02ecf6a8608",
+    "name": "successful-generosity",
+    "createdAt": "2026-07-06T06:08:03.317Z",
+    "updatedAt": "2026-07-06T06:08:03.317Z",
+    "deletedAt": null,
+    "environments": {
+      "edges": [
+        {
+          "node": {
+            "id": "245815e9-b736-47c3-8e13-6b45c3f970d4",
+            "name": "production",
+            "canAccess": true
+          }
+        }
+      ]
+    },
+    "services": {
+      "edges": [
+        {
+          "node": {
+            "id": "535f9a58-7a51-4c32-ac0d-85244047f697",
+            "name": "clothing-rental"
+          }
+        }
+      ]
+    }
+  }
+]
