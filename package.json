@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "npm --prefix backend install && npm --prefix backend exec prisma generate && npm --prefix backend run build",
-    "start": "npm --prefix backend start"
+    "build": "cd backend && npm install && npx prisma generate && npm run build",
+    "start": "cd backend && npx prisma db push && npm run seed && npm start"
   }
 }
