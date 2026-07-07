@@ -2466,7 +2466,18 @@ function App() {
             <strong>商品管理</strong>
             <a href="#merchant-products">商品列表</a>
             <a href="#merchant-products">发布新商品</a>
-            <a href="#merchant-reviews">评价管理</a>
+            <a href="#merchant-reviews">评价管理</a>         
+            <strong>店铺装修</strong>
+            <a
+              href="#merchant-decoration-list"
+              onClick={(e) => { e.preventDefault(); setMerchantSubPage("decoration-list"); setEditingDecoration(null); }}
+              className={merchantSubPage === "decoration-list" ? "active" : ""}
+            >装修列表</a>
+            <a
+              href="#merchant-shop-decoration"
+              onClick={(e) => { e.preventDefault(); setMerchantSubPage("shop-decoration"); setEditingDecoration(null); }}
+              className={merchantSubPage === "shop-decoration" ? "active" : ""}
+            >新建装修</a>
             <strong>营销与资产</strong>
             <a href="#merchant-coupons">营销活动</a>
             <a href="#merchant-wallet">账户资金</a>
