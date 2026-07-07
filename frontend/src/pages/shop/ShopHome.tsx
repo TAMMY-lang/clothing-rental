@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { apiClient } from "../../api";
+import { request } from "../../api";
 import type { Product } from "../../types";
 import BannerCarousel from "./components/BannerCarousel";
 import CountdownTimer from "./components/CountdownTimer";
