@@ -267,6 +267,9 @@ function App() {
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [withdrawalMethods, setWithdrawalMethods] = useState<WithdrawalMethod[]>([]);
   const [walletTransactions, setWalletTransactions] = useState<WalletTransaction[]>([]);
+   const [merchantSubPage, setMerchantSubPage] = useState<"workbench" | "shop-decoration" | "decoration-list">("workbench");
+  const [shopDecorations, setShopDecorations] = useState<ShopDecorationRecord[]>([]);
+  const [editingDecoration, setEditingDecoration] = useState<ShopDecorationRecord | null>(null);
   const [shopSetting, setShopSetting] = useState<ShopSetting | null>(null);
   const [memberLevels, setMemberLevels] = useState<MemberLevel[]>([]);
   const [tryOnSetting, setTryOnSetting] = useState<TryOnSetting | null>(null);
