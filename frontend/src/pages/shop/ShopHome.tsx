@@ -34,7 +34,7 @@ export default function ShopHome() {
 
   const fetchDecoration = async () => {
     try {
-      const res = await apiClient<{ data: ShopDecoration }>("/shop/decorations/active");
+      const res = await request<{ data: ShopDecoration }>("/shop/decorations/active");
       setDecoration(res.data);
     } catch {
       // 如果没有装修配置，使用默认
