@@ -23,7 +23,7 @@ export default function ProductList() {
       if (filter.maxPrice) params.append("maxPrice", filter.maxPrice);
       if (search) params.append("search", search);
 
-      const res = await apiClient<{ data: Product[]; total: number }>(`/products?${params}`);
+      const res = await request<{ data: Product[]; total: number }>(`/products?${params}`);
       setProducts(prev => append ? [...prev, ...res.data] : res.data);
       setHasMore(res.data.length >= 20);
     } catch (err) {
