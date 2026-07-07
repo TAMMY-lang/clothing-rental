@@ -1,3 +1,5 @@
+import ShopHome from "./pages/shop/ShopHome";
+import ProductList from "./pages/shop/ProductList";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import "./App.css";
 import {
