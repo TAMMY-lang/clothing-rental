@@ -2364,7 +2364,8 @@ function App() {
           </div>
         </header>
 
-        <section className="merchant-main-content">            {merchantSubPage === "shop-decoration" && (
+        <section className="merchant-main-content">
+            {merchantSubPage === "shop-decoration" && (
               <div className="shop-decoration-page" style={{ height: "calc(100vh - 200px)", minHeight: 600 }}>
                 <ShopDecoration
                   initialData={editingDecoration ?? undefined}
