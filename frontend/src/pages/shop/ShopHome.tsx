@@ -44,7 +44,7 @@ export default function ShopHome() {
 
   const fetchProducts = async () => {
     try {
-      const res = await apiClient<{ data: Product[] }>("/products");
+      const res = await request<{ data: Product[] }>("/products");
       setProducts(res.data);
     } catch (err) {
       console.error("Failed to fetch products", err);
