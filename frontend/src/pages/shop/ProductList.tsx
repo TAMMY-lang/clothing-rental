@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef, useCallback } from "react";
+import { useEffect, useState,  useRef, useCallback } from "react";
 import { apiClient } from "../../api";
 import type { Product } from "../../types";
 
