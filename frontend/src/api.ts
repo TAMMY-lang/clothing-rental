@@ -757,3 +757,6 @@ export async function updateProductSpec(specId: string, input: {
     body: JSON.stringify(input)
   });
 }
+export async function getActiveShopDecoration() {
+  return request<{ data: any }>("/shop/decorations/active");
+}
