@@ -1,5 +1,5 @@
 import { useEffect, useState,  useRef, useCallback } from "react";
-import { apiClient } from "../../api";
+import { request } from "../../api";
 import type { Product } from "../../types";
 
 export default function ProductList() {
