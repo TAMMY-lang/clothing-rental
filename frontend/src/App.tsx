@@ -2365,7 +2365,28 @@ function App() {
           </div>
         </header>
 
-        <section className="merchant-main-content">
+        <section className="merchant-main-content">            {merchantSubPage === "shop-decoration" && (
+              <div className="shop-decoration-page" style={{ height: "calc(100vh - 200px)", minHeight: 600 }}>
+                <ShopDecoration
+                  initialData={editingDecoration ?? undefined}
+                  onSave={(record) => { setShopDecorations((prev) => { const exists = prev.find((r) => r.id === record.id); if (exists) { return prev.map((r) => (r.id === record.id ? record : r)); } return [...prev, record]; }); setMerchantSubPage("decoration-list"); }}
+                  onPublish={(record) => { setShopDecorations((prev) => { const exists = prev.find((r) => r.id === record.id); if (exists) { return prev.map((r) => (r.id === record.id ? record : r)); } return [...prev, record]; }); setMerchantSubPage("decoration-list"); }}
+                  onBack={() => setMerchantSubPage("decoration-list")}
+                />
+              </div>
+            )}
+            {merchantSubPage === "decoration-list" && (
+              <div className="decoration-list-page" style={{ height: "calc(100vh - 200px)", minHeight: 600 }}>
+                <DecorationList
+                  records={shopDecorations}
+                  onCreate={() => { setEditingDecoration(null); setMerchantSubPage("shop-decoration"); }}
+                  onEdit={(record) => { setEditingDecoration(record); setMerchantSubPage("shop-decoration"); }}
+                  onDelete={(record) => { setShopDecorations((prev) => prev.filter((r) => r.id !== record.id)); }}
+                  onPreview={(record) => { setEditingDecoration(record); setMerchantSubPage("shop-decoration"); }}
+                  onTogglePublish={(record) => { setShopDecorations((prev) => prev.map((r) => r.id === record.id ? { ...r, status: r.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED" } : r)); }}
+                />
+              </div>
+            )}
           {message && <p className="message merchant-message">{message}</p>}
           <section className="order-detail-panel">
             <div className="section-title">
