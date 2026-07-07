@@ -2,6 +2,9 @@ import ShopHome from "./pages/shop/ShopHome";
 import ProductList from "./pages/shop/ProductList";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import "./App.css";
+import ShopDecoration from "./pages/merchant/ShopDecoration";
+import DecorationList from "./pages/merchant/DecorationList";
+import type { ShopDecorationRecord } from "./pages/merchant/ShopDecoration";
 import {
   adjustOrderPrice,
   activateAllProducts,
