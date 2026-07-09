@@ -1,10 +1,8 @@
 {
-  "buildCommand": "cd frontend && npm run build",
+  "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "framework": "vite",
-  "installCommand": "npm install",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://clothing-rental-production.up.railway.app/api/:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/:path*", "destination": "https://clothing-rental-production-9bfe.up.railway.app/api/:path*" }
   ]
 }
