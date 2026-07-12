@@ -1576,31 +1576,17 @@ function App() {
           phone: authForm.phone,
           password: authForm.password,
           deviceId,
-          deviceName: navigator.userAgent
+          deviceName: navigator.userAgent,
+          smsCode: "123456",
+          forceLogin: true
         };
         try {
           result = await login(baseInput);
         } catch (error) {
           const message = error instanceof Error ? error.message : "";
-          if (message.includes("陌生设备")) {
-            const smsCode = window.prompt("请输入短信验证码（测试验证码 123456）") || "";
-            try {
-              result = await login({ ...baseInput, smsCode });
-            } catch (nextError) {
-              const nextMessage = nextError instanceof Error ? nextError.message : "";
-              if (nextMessage.includes("TOTP") || nextMessage.includes("动态验证码")) {
-                const totpCode = window.prompt("请输入身份验证器 6 位动态验证码") || "";
-                result = await login({ ...baseInput, smsCode, totpCode });
-              } else {
-                throw nextError;
-              }
-            }
-          } else if (message.includes("TOTP") || message.includes("动态验证码")) {
+          if (message.includes("TOTP") || message.includes("动态验证码")) {
             const totpCode = window.prompt("请输入身份验证器 6 位动态验证码") || "";
             result = await login({ ...baseInput, totpCode });
-          } else if (message.includes("已有设备")) {
-            if (!window.confirm("已有设备在登录，是否继续？继续后旧设备将被下线。")) throw error;
-            result = await login({ ...baseInput, forceLogin: true });
           } else {
             throw error;
           }
