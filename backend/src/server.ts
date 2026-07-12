@@ -4,16 +4,34 @@ import { createApp } from "./app.js";
 
 const app = createApp();
 
-const server = app.listen(env.PORT, () => {
-  console.log(`服装租赁后端服务已启动：http://localhost:${env.PORT}`);
-});
-
-async function shutdown() {
-  server.close(async () => {
-    await prisma.$disconnect();
-    process.exit(0);
-  });
+async function seedIfEmpty() {
+  try {
+    const userCount = await prisma.user.count();
+    if (userCount === 0) {
+      console.log("[init] Database is empty, seeding default data...");
+      const { execSync } = await import("child_process");
+      execSync("npx prisma db seed", { stdio: "inherit", cwd: "/app" });
+      console.log("[init] Seed completed.");
+    } else {
+      console.log(`[init] Database has ${userCount} users, skipping seed.`);
+    }
+  } catch (err) {
+    console.error("[init] Seed check failed:", err.message);
+  }
 }
 
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+seedIfEmpty().then(() => {
+  const server = app.listen(env.PORT, () => {
+    console.log(`服装租赁后端服务已启动：http://localhost:${env.PORT}`);
+  });
+
+  async function shutdown() {
+    server.close(async () => {
+      await prisma.$disconnect();
+      process.exit(0);
+    });
+  }
+
+  process.on("SIGINT", shutdown);
+  process.on("SIGTERM", shutdown);
+});
