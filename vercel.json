@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://api.duojinxi.cn/api/:path*"
+      "destination": "https://clothing-rental-production-d13e.up.railway.app/api/:path*"
     }
   ]
 }
