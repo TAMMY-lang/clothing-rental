@@ -15,8 +15,9 @@ async function seedIfEmpty() {
     } else {
       console.log(`[init] Database has ${userCount} users, skipping seed.`);
     }
-  } catch (err) {
-    console.error("[init] Seed check failed:", err.message);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[init] Seed check failed:", msg);
   }
 }
 
