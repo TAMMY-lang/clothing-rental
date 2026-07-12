@@ -1,4 +1,42 @@
 -- ============================================================
+-- Supabase PostgreSQL Initialization Script (with DROP)
+-- Run this to reset all tables
+-- ============================================================
+
+-- Drop all existing tables (reverse dependency order)
+DROP TABLE IF EXISTS "StoreComponent" CASCADE;
+DROP TABLE IF EXISTS "StoreDecoration" CASCADE;
+DROP TABLE IF EXISTS "StoreTemplate" CASCADE;
+DROP TABLE IF EXISTS "ExtensionReview" CASCADE;
+DROP TABLE IF EXISTS "MerchantTenantReview" CASCADE;
+DROP TABLE IF EXISTS "ProductReview" CASCADE;
+DROP TABLE IF EXISTS "ChatMessage" CASCADE;
+DROP TABLE IF EXISTS "ChatConversation" CASCADE;
+DROP TABLE IF EXISTS "MemberLevel" CASCADE;
+DROP TABLE IF EXISTS "WalletTransaction" CASCADE;
+DROP TABLE IF EXISTS "WithdrawalMethod" CASCADE;
+DROP TABLE IF EXISTS "ShopSetting" CASCADE;
+DROP TABLE IF EXISTS "Withdrawal" CASCADE;
+DROP TABLE IF EXISTS "MerchantWallet" CASCADE;
+DROP TABLE IF EXISTS "Favorite" CASCADE;
+DROP TABLE IF EXISTS "CartItem" CASCADE;
+DROP TABLE IF EXISTS "Coupon" CASCADE;
+DROP TABLE IF EXISTS "ShopAnnouncement" CASCADE;
+DROP TABLE IF EXISTS "ReturnAddress" CASCADE;
+DROP TABLE IF EXISTS "TryOnSetting" CASCADE;
+DROP TABLE IF EXISTS "InventoryBooking" CASCADE;
+DROP TABLE IF EXISTS "Payment" CASCADE;
+DROP TABLE IF EXISTS "Order" CASCADE;
+DROP TABLE IF EXISTS "ProductSpec" CASCADE;
+DROP TABLE IF EXISTS "Product" CASCADE;
+DROP TABLE IF EXISTS "ProductCategory" CASCADE;
+DROP TABLE IF EXISTS "Device" CASCADE;
+DROP TABLE IF EXISTS "UserSession" CASCADE;
+DROP TABLE IF EXISTS "LoginLog" CASCADE;
+DROP TABLE IF EXISTS "User" CASCADE;
+DROP TABLE IF EXISTS "SecuritySetting" CASCADE;
+
+-- ============================================================
 -- Supabase PostgreSQL Initialization Script
 -- Generated from Prisma schema
 -- ============================================================
