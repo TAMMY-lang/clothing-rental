@@ -369,13 +369,14 @@ function App() {
   async function fetchProducts(category = selectedCategory) {
     setLoading(true);
     try {
+      const token = window.localStorage.getItem("authToken");
       const [data, announcementData, categoryData, enabledCoupons, cartData, favoriteData, levels, tryOn, addresses] = await Promise.all([
         listProducts({ category }),
         getAnnouncement(),
         listCategories(),
         listCoupons(true),
-        listCart(),
-        listFavorites(),
+        token ? listCart() : Promise.resolve([] as CartItem[]),
+        token ? listFavorites() : Promise.resolve([] as FavoriteItem[]),
         listMemberLevels(),
         getTryOnSetting(),
         listReturnAddresses(true)
