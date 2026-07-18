@@ -463,3 +463,206 @@ export async function setDefaultReturnAddress(id: string) {
     });
   });
 }
+
+// ---------- Store Decoration Schemas ----------
+
+export const createStoreTemplateSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+  theme: z.string().default("default"),
+  config: z.record(z.unknown()).default({}),
+  isPreset: z.boolean().default(false),
+  isActive: z.boolean().default(true)
+});
+
+export const updateStoreTemplateSchema = z.object({
+  name: z.string().min(1).optional(),
+  description: z.string().optional(),
+  theme: z.string().optional(),
+  config: z.record(z.unknown()).optional(),
+  isActive: z.boolean().optional()
+});
+
+export const createStoreDecorationSchema = z.object({
+  templateId: z.string().uuid().optional(),
+  name: z.string().min(1),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
+  components: z.array(z.record(z.unknown())).default([])
+});
+
+export const updateStoreDecorationSchema = z.object({
+  templateId: z.string().uuid().optional(),
+  name: z.string().min(1).optional(),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
+  components: z.array(z.record(z.unknown())).optional()
+});
+
+// ---------- Store Template Service ----------
+
+export async function listStoreTemplates() {
+  return prisma.storeTemplate.findMany({
+    orderBy: [{ isPreset: "desc" }, { createdAt: "desc" }]
+  });
+}
+
+export async function getStoreTemplate(id: string) {
+  const template = await prisma.storeTemplate.findUnique({ where: { id } });
+  if (!template) {
+    throw new AppError("模板不存在", 404, "STORE_TEMPLATE_NOT_FOUND");
+  }
+  return template;
+}
+
+export async function createStoreTemplate(input: z.infer<typeof createStoreTemplateSchema>) {
+  return prisma.storeTemplate.create({
+    data: {
+      name: input.name,
+      description: input.description,
+      theme: input.theme,
+      config: JSON.stringify(input.config),
+      isPreset: input.isPreset,
+      isActive: input.isActive
+    }
+  });
+}
+
+export async function updateStoreTemplate(id: string, input: z.infer<typeof updateStoreTemplateSchema>) {
+  const existing = await prisma.storeTemplate.findUnique({ where: { id } });
+  if (!existing) {
+    throw new AppError("模板不存在", 404, "STORE_TEMPLATE_NOT_FOUND");
+  }
+  return prisma.storeTemplate.update({
+    where: { id },
+    data: {
+      name: input.name,
+      description: input.description,
+      theme: input.theme,
+      config: input.config !== undefined ? JSON.stringify(input.config) : undefined,
+      isActive: input.isActive
+    }
+  });
+}
+
+export async function deleteStoreTemplate(id: string) {
+  const existing = await prisma.storeTemplate.findUnique({ where: { id } });
+  if (!existing) {
+    throw new AppError("模板不存在", 404, "STORE_TEMPLATE_NOT_FOUND");
+  }
+  return prisma.storeTemplate.delete({ where: { id } });
+}
+
+// ---------- Store Decoration Service ----------
+
+export async function listStoreDecorations() {
+  return prisma.storeDecoration.findMany({
+    orderBy: { createdAt: "desc" }
+  });
+}
+
+export async function getActiveStoreDecoration() {
+  const now = new Date();
+  const decoration = await prisma.storeDecoration.findFirst({
+    where: {
+      isActive: true,
+      OR: [
+        { startDate: null, endDate: null },
+        { startDate: { lte: now }, endDate: null },
+        { startDate: null, endDate: { gte: now } },
+        { startDate: { lte: now }, endDate: { gte: now } }
+      ]
+    },
+    orderBy: { updatedAt: "desc" }
+  });
+  return decoration;
+}
+
+export async function createStoreDecoration(input: z.infer<typeof createStoreDecorationSchema>) {
+  return prisma.storeDecoration.create({
+    data: {
+      templateId: input.templateId,
+      name: input.name,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      components: JSON.stringify(input.components),
+      isActive: false
+    }
+  });
+}
+
+export async function updateStoreDecoration(id: string, input: z.infer<typeof updateStoreDecorationSchema>) {
+  const existing = await prisma.storeDecoration.findUnique({ where: { id } });
+  if (!existing) {
+    throw new AppError("装修记录不存在", 404, "STORE_DECORATION_NOT_FOUND");
+  }
+  return prisma.storeDecoration.update({
+    where: { id },
+    data: {
+      templateId: input.templateId,
+      name: input.name,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      components: input.components !== undefined ? JSON.stringify(input.components) : undefined
+    }
+  });
+}
+
+export async function activateStoreDecoration(id: string) {
+  const existing = await prisma.storeDecoration.findUnique({ where: { id } });
+  if (!existing) {
+    throw new AppError("装修记录不存在", 404, "STORE_DECORATION_NOT_FOUND");
+  }
+  return prisma.storeDecoration.update({
+    where: { id },
+    data: { isActive: true }
+  });
+}
+
+export async function deactivateStoreDecoration(id: string) {
+  const existing = await prisma.storeDecoration.findUnique({ where: { id } });
+  if (!existing) {
+    throw new AppError("装修记录不存在", 404, "STORE_DECORATION_NOT_FOUND");
+  }
+  return prisma.storeDecoration.update({
+    where: { id },
+    data: { isActive: false }
+  });
+}
+
+// ---------- Store Component Service ----------
+
+export async function listStoreComponents() {
+  return prisma.storeComponent.findMany({
+    where: { enabled: true },
+    orderBy: { sortOrder: "asc" }
+  });
+}
+
+export async function ensureDefaultStoreComponents() {
+  const defaults = [
+    { type: "banner", name: "轮播图", icon: "image", defaultConfig: { images: [], height: 200, autoplay: true }, sortOrder: 1 },
+    { type: "productGrid", name: "商品网格", icon: "grid", defaultConfig: { title: "精选商品", limit: 6, category: null }, sortOrder: 2 },
+    { type: "coupon", name: "优惠券", icon: "ticket", defaultConfig: { title: "领券中心", couponIds: [] }, sortOrder: 3 },
+    { type: "countdown", name: "倒计时", icon: "clock", defaultConfig: { title: "活动倒计时", targetDate: null, style: "default" }, sortOrder: 4 },
+    { type: "notice", name: "公告栏", icon: "bell", defaultConfig: { content: "", style: "default", icon: true }, sortOrder: 5 },
+    { type: "categoryNav", name: "分类导航", icon: "menu", defaultConfig: { categories: [], columns: 4 }, sortOrder: 6 },
+    { type: "marquee", name: "跑马灯", icon: "scroll-text", defaultConfig: { text: "", speed: 40, style: "default" }, sortOrder: 7 },
+    { type: "imageText", name: "图文板块", icon: "image-plus", defaultConfig: { title: "", content: "", image: null, layout: "left" }, sortOrder: 8 }
+  ];
+
+  for (const item of defaults) {
+    await prisma.storeComponent.upsert({
+      where: { type: item.type },
+      update: {},
+      create: {
+        type: item.type,
+        name: item.name,
+        icon: item.icon,
+        defaultConfig: JSON.stringify(item.defaultConfig),
+        sortOrder: item.sortOrder,
+        enabled: true
+      }
+    });
+  }
+}
