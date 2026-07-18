@@ -37,7 +37,23 @@ import {
   updateShopSetting,
   updateSettlementSettingSchema,
   updateTryOnSetting,
-  updateTryOnSettingSchema
+  updateTryOnSettingSchema,
+  listStoreTemplates,
+  getStoreTemplate,
+  createStoreTemplate,
+  createStoreTemplateSchema,
+  updateStoreTemplate,
+  updateStoreTemplateSchema,
+  deleteStoreTemplate,
+  listStoreDecorations,
+  getActiveStoreDecoration,
+  createStoreDecoration,
+  createStoreDecorationSchema,
+  updateStoreDecoration,
+  updateStoreDecorationSchema,
+  activateStoreDecoration,
+  deactivateStoreDecoration,
+  listStoreComponents
 } from "../services/shop.service.js";
 
 export const shopRoutes = Router();
@@ -187,4 +203,80 @@ shopRoutes.patch("/return-addresses/:id/default", requireAuth, requireMerchant, 
   const id = z.string().uuid().parse(req.params.id);
   const address = await setDefaultReturnAddress(id);
   res.json({ data: address });
+}));
+
+// ---------- Store Templates ----------
+
+shopRoutes.get("/templates", asyncHandler(async (_req, res) => {
+  const templates = await listStoreTemplates();
+  res.json({ data: templates });
+}));
+
+shopRoutes.get("/templates/:id", asyncHandler(async (req, res) => {
+  const id = z.string().uuid().parse(req.params.id);
+  const template = await getStoreTemplate(id);
+  res.json({ data: template });
+}));
+
+shopRoutes.post("/templates", requireAuth, requireMerchant, asyncHandler(async (req, res) => {
+  const body = createStoreTemplateSchema.parse(req.body);
+  const template = await createStoreTemplate(body);
+  res.status(201).json({ data: template });
+}));
+
+shopRoutes.put("/templates/:id", requireAuth, requireMerchant, asyncHandler(async (req, res) => {
+  const id = z.string().uuid().parse(req.params.id);
+  const body = updateStoreTemplateSchema.parse(req.body);
+  const template = await updateStoreTemplate(id, body);
+  res.json({ data: template });
+}));
+
+shopRoutes.delete("/templates/:id", requireAuth, requireMerchant, asyncHandler(async (req, res) => {
+  const id = z.string().uuid().parse(req.params.id);
+  await deleteStoreTemplate(id);
+  res.json({ data: null });
+}));
+
+// ---------- Store Decorations ----------
+
+shopRoutes.get("/decorations", asyncHandler(async (_req, res) => {
+  const decorations = await listStoreDecorations();
+  res.json({ data: decorations });
+}));
+
+shopRoutes.get("/decorations/active", asyncHandler(async (_req, res) => {
+  const decoration = await getActiveStoreDecoration();
+  res.json({ data: decoration });
+}));
+
+shopRoutes.post("/decorations", requireAuth, requireMerchant, asyncHandler(async (req, res) => {
+  const body = createStoreDecorationSchema.parse(req.body);
+  const decoration = await createStoreDecoration(body);
+  res.status(201).json({ data: decoration });
+}));
+
+shopRoutes.put("/decorations/:id", requireAuth, requireMerchant, asyncHandler(async (req, res) => {
+  const id = z.string().uuid().parse(req.params.id);
+  const body = updateStoreDecorationSchema.parse(req.body);
+  const decoration = await updateStoreDecoration(id, body);
+  res.json({ data: decoration });
+}));
+
+shopRoutes.put("/decorations/:id/activate", requireAuth, requireMerchant, asyncHandler(async (req, res) => {
+  const id = z.string().uuid().parse(req.params.id);
+  const decoration = await activateStoreDecoration(id);
+  res.json({ data: decoration });
+}));
+
+shopRoutes.put("/decorations/:id/deactivate", requireAuth, requireMerchant, asyncHandler(async (req, res) => {
+  const id = z.string().uuid().parse(req.params.id);
+  const decoration = await deactivateStoreDecoration(id);
+  res.json({ data: decoration });
+}));
+
+// ---------- Store Components ----------
+
+shopRoutes.get("/components", asyncHandler(async (_req, res) => {
+  const components = await listStoreComponents();
+  res.json({ data: components });
 }));
